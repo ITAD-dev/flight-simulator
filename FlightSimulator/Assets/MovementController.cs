@@ -37,7 +37,7 @@ public class MovementController: MonoBehaviour {
     } else if (Input.GetKey(KeyCode.S)) {
       this.transform.position -= this.transform.forward * Time.deltaTime * speed;
     }
-    float rotationSpeed = 20.0f;
+    float rotationSpeed = 35.0f;
     if (Input.GetKey(KeyCode.A)) {
       this.transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
     }
@@ -46,13 +46,21 @@ public class MovementController: MonoBehaviour {
     }
   }
 
-  void handleHoveringState() {
+  bool handleVerticalAccelerationInputs() {
     if (Input.GetKey(KeyCode.Space) && this.currentUpwardVelocity < this.maximumUpwardVelocity) {
       this.currentUpwardVelocity += this.autonomousVerticalAcceleration;
+      return true;
     } else if (Input.GetKey(KeyCode.L)
                && this.currentUpwardVelocity > -this.maximumUpwardVelocity) {
       this.currentUpwardVelocity -= this.autonomousVerticalAcceleration;
+      return true;
     } else {
+      return false;
+    }
+  }
+
+  void handleHoveringState() {
+    if (!this.handleVerticalAccelerationInputs()) {
       this.currentUpwardVelocity = 0;
     }
     this.adjustVerticalPosition();
@@ -64,6 +72,7 @@ public class MovementController: MonoBehaviour {
     } else {
       this.currentUpwardVelocity = 0;
     }
+    this.handleVerticalAccelerationInputs();
     this.adjustVerticalPosition();
   }
 
